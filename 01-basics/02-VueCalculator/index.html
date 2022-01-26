@@ -32,21 +32,21 @@
   <div id="app" class="container">
     <div class="row">
       <div class="col">
-        <input @change="calculate" type="number" v-model="firstOperand">
+        <input type="number" v-model="firstOperand">
       </div>
 
-      <div @change="calculate" class="col" style="display: flex; flex-direction: column; font-family: emoji">
+      <div class="col" style="display: flex; flex-direction: column; font-family: emoji">
         <label><input type="radio" v-model="buttonValue" value="sum"> ➕</label>
         <label><input type="radio" v-model="buttonValue" value="subtract"> ➖</label>
         <label><input type="radio" v-model="buttonValue" value="multiply"> ✖</label>
         <label><input type="radio" v-model="buttonValue" value="divide"> ➗</label>
       </div>
       <div class="col">
-        <input @change="calculate" type="number" v-model="secondOperand">
+        <input type="number" v-model="secondOperand">
       </div>
 
       <div class="col">=</div>
-      <output class="col">{{ result }}</output>
+      <output class="col">{{ calculate }}</output>
     </div>
   </div>
 

@@ -1,6 +1,6 @@
 import { createApp } from './vendor/vue.esm-browser.js';
-
 // From https://jsonplaceholder.typicode.com/comments
+
 const emails = [
   'Eliseo@gardner.biz',
   'Jayne_Kuhic@sydney.com',
@@ -32,20 +32,25 @@ const emails = [
 const MarkedList = {
   data() {
     return {
-      emails: emails,
-      filteredEmails: [],
+      emails,
       inputValue: '',
+
     }
   },
 
   computed: {
-    filterEmails() {
-      if (this.inputValue !== '') {
-        this.filteredEmails = this.emails.filter(email => email.toLowerCase().includes(this.inputValue));
-      }
-      else { this.filteredEmails = []; }
-    }
-  },
+    filteredEmails() {
+      const arr = this.emails.map(element => {
+        const obj = {
+          email: element,
+          marked: false,
+        }
+        if (element.toLowerCase().includes(this.inputValue.toLowerCase()) && this.inputValue !== '') { obj.marked = true };
+        return obj;
+      });
+      return arr;
+    },
+  }
 }
 
 createApp(MarkedList).mount('#app');
