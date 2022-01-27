@@ -19,7 +19,7 @@
         <input type="search" v-model="inputValue">
       </div>
       <ul>
-        <li v-for="email in filteredEmails" :class="{'marked': email.marked}">
+        <li v-for="email in filteredEmails" :class="{ 'marked': email.marked }">
           {{ email.email }}
         </li>
       </ul>
