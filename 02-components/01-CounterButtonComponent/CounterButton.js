@@ -8,9 +8,10 @@ export default defineComponent({
       default: 0,
     },
   },
+  emits: ['update:count'],
   methods: {
     increaseCount() {
-      this.$emit('update:count', this.count + 1)
+      this.$emit('update:count', this.count + 1);
     }
   },
 
