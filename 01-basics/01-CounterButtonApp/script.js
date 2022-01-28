@@ -1,3 +1,11 @@
-// import { createApp } from './vendor/vue.esm-browser.js';
+import { createApp } from './vendor/vue.esm-browser.js';
 
-// Создайте Vue приложение
+const CounterButtonApp = {
+    data() {
+        return {
+            count: 0,
+        }
+    }
+}
+
+createApp(CounterButtonApp).mount('#app');
