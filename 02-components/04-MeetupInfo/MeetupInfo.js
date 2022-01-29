@@ -41,7 +41,7 @@ export default defineComponent({
       </li>
       <li>
         <img class="icon meetup-info__icon" alt="icon" src="/assets/icons/icon-cal-lg.svg" />
-        <time datetime="2020-01-01">{{ localDate }}</time>
+        <time :datetime="date">{{ localDate }}</time>
       </li>
     </ul>`,
 });
