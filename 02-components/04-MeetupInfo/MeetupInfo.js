@@ -14,18 +14,26 @@ export default defineComponent({
     date: {
       type: Number,
       required: true,
-    }
+    },
   },
 
+
+
   computed: {
+    isosDate() {
+      const date = new Date(this.date);
+      return date.toISOString().substring(0, 10);
+    },
+
     localDate() {
       const options = {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       }
+      const lang = navigator.language
       const date = new Date(this.date);
-      return date.toLocaleDateString('ru', options);
+      return date.toLocaleDateString(lang, options);
     }
   },
 
@@ -41,7 +49,7 @@ export default defineComponent({
       </li>
       <li>
         <img class="icon meetup-info__icon" alt="icon" src="/assets/icons/icon-cal-lg.svg" />
-        <time :datetime="date">{{ localDate }}</time>
+        <time :datetime="isosDate">{{ localDate }}</time>
       </li>
     </ul>`,
 });
