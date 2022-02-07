@@ -20,11 +20,7 @@ export default {
   },
   computed: {
     bgImage() {
-      if (this.image) {
-        return `url(${this.image})`;
-      } else {
-        return 'var(--default-cover)';
-      }
+      return this.image ? `url(${this.image})` : 'var(--default-cover)';
     },
   },
 };
