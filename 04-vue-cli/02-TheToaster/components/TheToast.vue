@@ -1,23 +1,19 @@
 <template>
   <div v-for="(item, index) in toaster" :key="index" class="toast" :class="item.toastClass">
-    <ui-container>
-      <ui-icon class="toast__icon" :icon="item.toastIcon" />
-      <span>{{ item.toastMessage }}</span>
-      <div @click="close(index)" class="toast_button-close">х</div>
-    </ui-container>
+    <ui-icon class="toast__icon" :icon="item.toastIcon" />
+    <span>{{ item.toastMessage }}</span>
+    <div @click="close(index)" class="toast_button-close">х</div>
   </div>
 </template>
 
 <script>
 import UiIcon from './UiIcon.vue';
-import UiContainer from './UiContainer.vue';
 
 export default {
   name: 'TheToast',
   props: ['toaster'],
 
   components: {
-    UiContainer,
     UiIcon,
   },
   methods: {
