@@ -3,7 +3,7 @@
     <ui-container>
       <ui-icon class="toast__icon" :icon="item.toastIcon" />
       <span>{{ item.toastMessage }}</span>
-      <!-- <div @click="close(index)" class="toast_button-close">х</div> -->
+      <div @click="close(index)" class="toast_button-close">х</div>
     </ui-container>
   </div>
 </template>
@@ -20,11 +20,11 @@ export default {
     UiContainer,
     UiIcon,
   },
-  // methods: {
-  //   close(index) {
-  //     this.toaster.splice(index, 1);
-  //   },
-  // },
+  methods: {
+    close(index) {
+      this.toaster.splice(index, 1);
+    },
+  },
 };
 </script>
 
