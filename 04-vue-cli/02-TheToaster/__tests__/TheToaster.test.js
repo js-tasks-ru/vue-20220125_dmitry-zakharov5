@@ -51,7 +51,9 @@ describe('vue-cli/TheToaster', () => {
       await nextTick();
       const toasts = wrapper.findAll('.toast');
       expect(toasts).toHaveLength(messages.length);
-      expect(toasts.map((toast) => toast.text())).toEqual(messages);
+      for (let i = 0; i < toasts.length; i++) {
+        expect(toasts[i].text()).toContain(messages[i]);
+      }
     });
 
     it('TheToaster должен удалять тост через 5 секунд после добавления', async () => {
