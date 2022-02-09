@@ -1,7 +1,7 @@
 <template>
   <div v-for="(item, index) in toaster" :key="index" class="toast" :class="item.toastClass">
     <ui-icon class="toast__icon" :icon="item.toastIcon" />
-    <span>{{ item.toastMessage }}</span>
+    <slot>{{ item.toastMessage }}</slot>
     <div @click="close(index)" class="toast_button-close">х</div>
   </div>
 </template>
