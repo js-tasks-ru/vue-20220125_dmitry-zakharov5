@@ -1,18 +1,22 @@
 <template>
-  <div class="dropdown dropdown_opened">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon">
-      <ui-icon icon="tv" class="dropdown__icon" />
-      <span>Title</span>
+  <div class="dropdown" :class="{ 'dropdown_opened': this.showed }">
+    <button @click="showDropdown" type="button" class="dropdown__toggle" :class="{ 'dropdown__toggle_icon': hasIcon }">
+      <ui-icon v-if="hasIcon" :icon="currentIcon" class="dropdown__icon" />
+      <span>{{ preview }}</span>
     </button>
 
-    <div class="dropdown__menu" role="listbox">
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 1
-      </button>
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 2
+    <div v-show="showed" class="dropdown__menu" role="listbox">
+      <button
+        v-for="(option, index) in options"
+        :key="index"
+        class="dropdown__item"
+        :class="{ 'dropdown__item_icon': hasIcon }"
+        role="option"
+        type="button"
+        @click="selectThis(option.value)"
+      >
+        <ui-icon v-if="hasIcon" :icon="option.icon" class="dropdown__icon" />
+        {{ option.text }}
       </button>
     </div>
   </div>
@@ -25,6 +29,74 @@ export default {
   name: 'UiDropdown',
 
   components: { UiIcon },
+  emits: ['update:modelValue'],
+  props: {
+    options: {
+      type: Array,
+      require: true,
+      validator: (array) => array.length,
+    },
+    modelValue: {
+      type: String,
+      require: false,
+      validator: (value) => value !== '',
+    },
+    title: {
+      type: String,
+      require: true,
+    },
+  },
+
+  data() {
+    return {
+      showed: false,
+    };
+  },
+
+  methods: {
+    showDropdown() {
+      if (this.showed) {
+        this.showed = false;
+      } else {
+        this.showed = true;
+      }
+    },
+
+    selectThis(value) {
+      this.$emit('update:modelValue', value);
+      this.showed = false;
+    },
+  },
+
+  computed: {
+    hasIcon() {
+      return this.options.some((option) => option.icon);
+    },
+
+    preview() {
+      let content = '';
+      if (!this.modelValue) {
+        content = this.title;
+      }
+
+      this.options.forEach((option) => {
+        if (this.modelValue === option.value) {
+          content = option.text;
+        }
+      });
+      return content;
+    },
+
+    currentIcon() {
+      let icone = '';
+      this.options.forEach((option) => {
+        if (this.modelValue === option.value) {
+          icone = option.icon;
+        }
+      });
+      return icone;
+    },
+  },
 };
 </script>
 

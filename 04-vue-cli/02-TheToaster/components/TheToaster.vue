@@ -1,24 +1,49 @@
 <template>
   <div class="toasts">
-    <div class="toast toast_success">
-      <ui-icon class="toast__icon" icon="check-circle" />
-      <span>Success Toast Example</span>
-    </div>
-
-    <div class="toast toast_error">
-      <ui-icon class="toast__icon" icon="alert-circle" />
-      <span>Error Toast Example</span>
-    </div>
+    <toast-list :toaster="toaster" />
   </div>
 </template>
 
 <script>
-import UiIcon from './UiIcon';
+import ToastList from './ToastList.vue';
 
 export default {
   name: 'TheToaster',
 
-  components: { UiIcon },
+  components: {
+    ToastList,
+  },
+
+  data() {
+    return {
+      toaster: [],
+    };
+  },
+
+  methods: {
+    success(message) {
+      this.addToast(message, 'success');
+      this.removeToast(5000);
+    },
+
+    error(message) {
+      this.addToast(message, 'error');
+      this.removeToast(5000);
+    },
+
+    addToast(message, type) {
+      const toast = {
+        toastId: Date.now(),
+        toastMessage: message,
+        toastType: type,
+      };
+      this.toaster.push(toast);
+    },
+
+    removeToast(timeout) {
+      setTimeout(() => this.toaster.splice(0, 1), timeout);
+    },
+  },
 };
 </script>
 
@@ -39,35 +64,5 @@ export default {
     bottom: 72px;
     right: 112px;
   }
-}
-
-.toast {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: row;
-  align-items: center;
-  padding: 16px;
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
-  font-size: 18px;
-  line-height: 28px;
-  width: auto;
-}
-
-.toast + .toast {
-  margin-top: 20px;
-}
-
-.toast__icon {
-  margin-right: 12px;
-}
-
-.toast.toast_success {
-  color: var(--green);
-}
-
-.toast.toast_error {
-  color: var(--red);
 }
 </style>

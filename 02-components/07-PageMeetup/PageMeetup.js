@@ -17,7 +17,7 @@ export default defineComponent({
 
   data() {
     return {
-      meetup: {},
+      meetup: null,
       status: '',
       error: '',
     }
@@ -37,7 +37,7 @@ export default defineComponent({
           },
           err => {
             this.status = 'error';
-            this.error = err
+            this.error = err;
           }
         );
       }

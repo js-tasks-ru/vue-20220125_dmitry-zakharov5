@@ -21,8 +21,7 @@ export default defineComponent({
 
   computed: {
     isosDate() {
-      const date = new Date(this.date);
-      return date.toISOString().substring(0, 10);
+      return new Date(this.date).toISOString().substring(0, 10);
     },
 
     localDate() {
