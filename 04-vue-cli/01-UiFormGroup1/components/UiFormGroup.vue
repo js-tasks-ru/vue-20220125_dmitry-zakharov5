@@ -1,6 +1,6 @@
 <template>
-  <div class="form-group" :class="formGroupInline">
-    <label v-if="label" class="form-group__label">{{ label }}</label>
+  <div class="form-group" :class="{ 'form-group_inline': this.inline }">
+    <label v-if="hasLabel" class="form-group__label">{{ label }}</label>
     <slot></slot>
   </div>
 </template>
@@ -21,11 +21,7 @@ export default {
   },
 
   computed: {
-    formGroupInline() {
-      return this.inline ? 'form-group_inline' : false;
-    },
-
-    label() {
+    hasLabel() {
       return this.label ? this.label : false;
     },
   },

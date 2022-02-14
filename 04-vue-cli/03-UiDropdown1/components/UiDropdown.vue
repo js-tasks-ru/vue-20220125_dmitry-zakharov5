@@ -1,9 +1,8 @@
 <template>
   <div class="dropdown" :class="{ 'dropdown_opened': this.showed }">
     <button @click="showDropdown" type="button" class="dropdown__toggle" :class="{ 'dropdown__toggle_icon': hasIcon }">
-      <ui-icon v-if="hasIcon" :icon="icon" class="dropdown__icon" />
-      <span v-if="!selected">{{ title }}</span>
-      <span v-if="selected">{{ selected }}</span>
+      <ui-icon v-if="hasIcon" :icon="currentIcon" class="dropdown__icon" />
+      <span>{{ preview }}</span>
     </button>
 
     <div v-show="showed" class="dropdown__menu" role="listbox">
@@ -16,7 +15,7 @@
         type="button"
         @click="selectThis(option.value)"
       >
-        <ui-icon v-show="icon" :icon="option.icon" class="dropdown__icon" />
+        <ui-icon v-if="hasIcon" :icon="option.icon" class="dropdown__icon" />
         {{ option.text }}
       </button>
     </div>
@@ -51,28 +50,16 @@ export default {
   data() {
     return {
       showed: false,
-      selected: '',
-      icon: '',
     };
-  },
-
-  watch: {
-    modelValue: {
-      immediate: true,
-      handler() {
-        this.options.forEach((option) => {
-          if (this.modelValue === option.value) {
-            this.selected = option.text;
-            this.icon = option.icon;
-          }
-        });
-      },
-    },
   },
 
   methods: {
     showDropdown() {
-      this.showed ? (this.showed = false) : (this.showed = true);
+      if (this.showed) {
+        this.showed = false;
+      } else {
+        this.showed = true;
+      }
     },
 
     selectThis(value) {
@@ -83,9 +70,31 @@ export default {
 
   computed: {
     hasIcon() {
-      let hasIcon = false;
-      this.options.forEach((option) => (option.icon ? (hasIcon = true) : (hasIcon = false)));
-      return hasIcon;
+      return this.options.some((option) => option.icon);
+    },
+
+    preview() {
+      let content = '';
+      if (!this.modelValue) {
+        content = this.title;
+      }
+
+      this.options.forEach((option) => {
+        if (this.modelValue === option.value) {
+          content = option.text;
+        }
+      });
+      return content;
+    },
+
+    currentIcon() {
+      let icone = '';
+      this.options.forEach((option) => {
+        if (this.modelValue === option.value) {
+          icone = option.icon;
+        }
+      });
+      return icone;
     },
   },
 };

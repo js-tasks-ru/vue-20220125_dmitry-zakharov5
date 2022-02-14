@@ -1,17 +1,17 @@
 <template>
   <div class="toasts">
-    <the-toast v-if="toaster.length" :toaster="toaster" />
+    <toast-list :toaster="toaster" />
   </div>
 </template>
 
 <script>
-import TheToast from './TheToast.vue';
+import ToastList from './ToastList.vue';
 
 export default {
   name: 'TheToaster',
 
   components: {
-    TheToast,
+    ToastList,
   },
 
   data() {
@@ -22,25 +22,26 @@ export default {
 
   methods: {
     success(message) {
-      const obj = {
-        toastClass: 'toast_success',
-        toastMessage: message,
-        toastIcon: 'check-circle',
-        timeout: 5000,
-      };
-      this.toaster.push(obj);
-      setTimeout(() => this.toaster.splice(0, 1), obj.timeout);
+      this.addToast(message, 'success');
+      this.removeToast(5000);
     },
 
     error(message) {
-      const obj = {
-        toastClass: 'toast_error',
+      this.addToast(message, 'error');
+      this.removeToast(5000);
+    },
+
+    addToast(message, type) {
+      const toast = {
+        toastId: Date.now(),
         toastMessage: message,
-        toastIcon: 'alert-circle',
-        timeout: 5000,
+        toastType: type,
       };
-      this.toaster.push(obj);
-      setTimeout(() => this.toaster.splice(0, 1), obj.timeout);
+      this.toaster.push(toast);
+    },
+
+    removeToast(timeout) {
+      setTimeout(() => this.toaster.splice(0, 1), timeout);
     },
   },
 };
