@@ -2,7 +2,6 @@
   <div class="wrapper">
     <meetups-header />
     <main class="main">
-      <div v-show="false">CURRENT PAGE</div>
       <router-view />
     </main>
     <meetups-footer />
