@@ -6,7 +6,7 @@ export const router = createRouter({
 
     if (to.hash) { return { el: to.hash, behavior: 'smooth', } }
 
-    if (from.meta.saveScrollPosition) { return false }
+    if (from.meta.saveScrollPosition && to.meta.saveScrollPosition) { return false }
 
     else { return { top: 0, left: 0, } }
   },
