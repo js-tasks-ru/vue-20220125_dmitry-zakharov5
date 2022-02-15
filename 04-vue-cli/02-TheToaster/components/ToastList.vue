@@ -8,8 +8,8 @@
       'toast_error': item.toastType === 'error',
     }"
   >
-    <ui-icon class="toast__icon" :icon="toastIcon[item.toastType]" />
-    <slot>{{ item.toastMessage }}</slot>
+    <ui-icon class="toast__icon" :icon="$options.toastIcon[item.toastType]" />
+    <span>{{ item.toastMessage }}</span>
     <div @click="close(index)" class="toast_button-close">х</div>
   </div>
 </template>
@@ -19,21 +19,18 @@ import UiIcon from './UiIcon.vue';
 
 export default {
   name: 'ToastList',
+
+  toastIcon: {
+    success: 'check-circle',
+    error: 'alert-circle',
+  },
+
   props: {
     toaster: Array,
   },
 
   components: {
     UiIcon,
-  },
-
-  data() {
-    return {
-      toastIcon: {
-        'success': 'check-circle',
-        'error': 'alert-circle',
-      },
-    };
   },
 
   methods: {

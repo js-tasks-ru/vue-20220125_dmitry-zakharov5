@@ -32,8 +32,9 @@ export default {
     },
 
     addToast(message, type) {
+      let uniId = 0;
       const toast = {
-        toastId: Date.now(),
+        toastId: uniId++,
         toastMessage: message,
         toastType: type,
       };

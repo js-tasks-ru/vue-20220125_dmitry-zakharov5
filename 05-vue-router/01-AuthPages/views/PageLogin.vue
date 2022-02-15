@@ -16,14 +16,16 @@
         <div class="form__buttons">
           <button type="submit" class="button button_primary button_block">Войти</button>
         </div>
-        <div class="form__append">Нет аккаунта? <a href="/register" class="link">Зарегистрируйтесь</a></div>
+        <div class="form__append">
+          Нет аккаунта? <router-link :to="{ name: 'register' }" class="link">Зарегистрируйтесь</router-link>
+        </div>
       </form>
     </ui-container>
   </div>
 </template>
 
 <script>
-import UiFormGroup from '../components/UiFormGroup';
+import UiFormGroup from '../../../04-vue-cli/01-UiFormGroup1/components/UiFormGroup.vue';
 import UiContainer from '../components/UiContainer';
 
 export default {
@@ -36,7 +38,14 @@ export default {
 
   methods: {
     handleSubmit() {
-      // Требуется обработать сабмит формы
+      const queryParams = this.$route.query;
+
+      if (queryParams.from) {
+        this.$router.push(queryParams.from);
+      }
+      if (!queryParams.from || !Object.keys(queryParams).length) {
+        this.$router.push({ name: 'index' });
+      }
     },
   },
 };
