@@ -1,4 +1,4 @@
-<template>
+gi<template>
   <div class="sample container">
     <p>
       <ui-link tag="router-link" to="/">tag="router-link" to="/"</ui-link>
