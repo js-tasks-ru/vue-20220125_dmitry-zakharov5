@@ -42,8 +42,7 @@ export default {
 
       if (queryParams.from) {
         this.$router.push(queryParams.from);
-      }
-      if (!queryParams.from || !Object.keys(queryParams).length) {
+      } else {
         this.$router.push({ name: 'index' });
       }
     },

@@ -17,6 +17,7 @@ export default {
   data() {
     return {
       toaster: [],
+      uniqueId: 0,
     };
   },
 
@@ -32,9 +33,8 @@ export default {
     },
 
     addToast(message, type) {
-      let uniId = 0;
       const toast = {
-        toastId: uniId++,
+        toastId: this.uniqueId++,
         toastMessage: message,
         toastType: type,
       };
