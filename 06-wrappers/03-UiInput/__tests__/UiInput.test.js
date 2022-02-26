@@ -86,7 +86,7 @@ describe('wrappers/UiInput', () => {
       const wrapper = shallowMount(UiInput, {
         slots: { 'left-icon': iconSlot },
       });
-      expect(wrapper.find('.input-group').classes()).toMatchObject([
+      expect(wrapper.find('.input-group').classes().slice().sort()).toMatchObject([
         'input-group',
         'input-group_icon',
         'input-group_icon-left',
@@ -100,7 +100,11 @@ describe('wrappers/UiInput', () => {
       const wrapper = shallowMount(UiInput, {
         slots: { 'right-icon': iconSlot },
       });
-      expect(wrapper.classes()).toMatchObject(['input-group', 'input-group_icon', 'input-group_icon-right']);
+      expect(wrapper.classes().slice().sort()).toMatchObject([
+        'input-group',
+        'input-group_icon',
+        'input-group_icon-right',
+      ]);
       expect(wrapper.find('.input-group__icon').exists()).toBeTruthy();
       expect(wrapper.find('.input-group__icon').html()).toContain(iconSlot);
     });

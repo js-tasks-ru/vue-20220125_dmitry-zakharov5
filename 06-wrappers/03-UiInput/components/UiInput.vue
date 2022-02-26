@@ -1,6 +1,6 @@
 <template>
   <div class="input-group" :class="iconsClasses">
-    <div v-if="hasSlots" class="input-group__icon">
+    <div v-if="!!this.$slots['left-icon']" class="input-group__icon">
       <slot name="left-icon"></slot>
     </div>
     <textarea
@@ -8,7 +8,7 @@
       ref="input"
       @[dinamicEvent]="modelValueProxy = $event.target.value"
       :value="modelValueProxy"
-      :="$attrs"
+      v-bind="$attrs"
       class="form-control"
       :class="classes"
     ></textarea>
@@ -21,7 +21,7 @@
       class="form-control"
       :class="classes"
     />
-    <div v-if="hasSlots" class="input-group__icon">
+    <div v-if="!!this.$slots['right-icon']" class="input-group__icon">
       <slot name="right-icon"></slot>
     </div>
   </div>
@@ -49,7 +49,7 @@ export default {
     };
   },
 
-  mounted() {
+  created() {
     this.hasSlots = !!this.$slots['left-icon'] || !!this.$slots['right-icon'];
   },
 

@@ -1,8 +1,17 @@
 <template>
   <div class="image-uploader">
-    <label class="image-uploader__preview image-uploader__preview-loading" style="--bg-url: url('/link.jpeg')">
-      <span class="image-uploader__text">Загрузить изображение</span>
-      <input type="file" accept="image/*" class="image-uploader__input" />
+    <label class="image-uploader__preview" :class="uploaderClass" :style="uploaderBgImage">
+      <span class="image-uploader__text">{{ text }}</span>
+      <input
+        type="file"
+        ref="input"
+        accept="image/*"
+        class="image-uploader__input"
+        v-bind="$attrs"
+        :disabled="loading"
+        @change="selectImage"
+        @click="removeImage"
+      />
     </label>
   </div>
 </template>
@@ -10,11 +19,94 @@
 <script>
 export default {
   name: 'UiImageUploader',
+
+  props: {
+    preview: String,
+    uploader: Function,
+  },
+
+  inheritAttrs: false,
+
+  emits: ['select', 'upload', 'error', 'remove'],
+
+  data() {
+    return {
+      loading: false,
+      url: undefined,
+    };
+  },
+
+  created() {
+    if (this.preview) {
+      this.url = this.preview;
+    }
+  },
+
+  methods: {
+    selectImage() {
+      const image = this.$refs.input.files[0];
+      this.url = URL.createObjectURL(image);
+      this.$emit('select', image);
+      if (this.uploader) {
+        this.uploadImage(image);
+      }
+    },
+
+    async uploadImage(image) {
+      try {
+        this.loading = true;
+        const res = await this.uploader(image);
+        this.$emit('upload', res);
+      } catch (err) {
+        this.$emit('error', err);
+        this.$refs.input.value = null;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    removeImage(event) {
+      if (this.preview && this.url) {
+        event.preventDefault();
+        this.url = undefined;
+      }
+      this.$emit('remove');
+      this.$refs.input.value = null;
+      return;
+    },
+  },
+  computed: {
+    uploaderClass() {
+      return {
+        'image-uploader__preview-loading': this.loading,
+      };
+    },
+
+    uploaderBgImage() {
+      if (!this.url || !this.preview) {
+        return '--bg-url: var(--default-cover)';
+      }
+      return `--bg-url: url(${this.preview})`;
+    },
+
+    text() {
+      if (!this.url || (!this.preview && !this.loading)) {
+        return 'Загрузить изображение';
+      }
+      if (this.loading) {
+        return 'Загрузка...';
+      }
+      if (this.url || (this.preview && !this.loading)) {
+        return 'Удалить изображение';
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
 .image-uploader {
+  background-image: var(--bg-url);
 }
 
 .image-uploader__input {
