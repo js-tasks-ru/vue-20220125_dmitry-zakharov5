@@ -59,6 +59,7 @@ export default {
         this.$emit('upload', res);
       } catch (err) {
         this.$emit('error', err);
+        this.url = undefined;
         this.$refs.input.value = null;
       } finally {
         this.loading = false;
@@ -66,7 +67,7 @@ export default {
     },
 
     removeImage(event) {
-      if (this.preview && this.url) {
+      if (this.url) {
         event.preventDefault();
         this.url = undefined;
       }
@@ -83,20 +84,20 @@ export default {
     },
 
     uploaderBgImage() {
-      if (!this.url || !this.preview) {
+      if (!this.url) {
         return '--bg-url: var(--default-cover)';
       }
       return `--bg-url: url(${this.preview})`;
     },
 
     text() {
-      if (!this.url || (!this.preview && !this.loading)) {
+      if (!this.url && !this.loading) {
         return 'Загрузить изображение';
       }
       if (this.loading) {
         return 'Загрузка...';
       }
-      if (this.url || (this.preview && !this.loading)) {
+      if (this.url && !this.loading) {
         return 'Удалить изображение';
       }
     },
