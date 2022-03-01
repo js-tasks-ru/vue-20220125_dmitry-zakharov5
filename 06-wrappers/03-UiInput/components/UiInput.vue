@@ -1,13 +1,28 @@
 <template>
-  <div class="input-group input-group_icon input-group_icon-left input-group_icon-right">
-    <div class="input-group__icon">
-      <img class="icon" alt="icon" />
+  <div class="input-group" :class="iconsClasses">
+    <div v-if="!!this.$slots['left-icon']" class="input-group__icon">
+      <slot name="left-icon"></slot>
     </div>
-
-    <input ref="input" class="form-control form-control_rounded form-control_sm" />
-
-    <div class="input-group__icon">
-      <img class="icon" alt="icon" />
+    <textarea
+      v-if="multiline"
+      ref="input"
+      @[dinamicEvent]="modelValueProxy = $event.target.value"
+      :value="modelValueProxy"
+      v-bind="$attrs"
+      class="form-control"
+      :class="classes"
+    ></textarea>
+    <input
+      v-else
+      ref="input"
+      @[dinamicEvent]="modelValueProxy = $event.target.value"
+      :value="modelValueProxy"
+      v-bind="$attrs"
+      class="form-control"
+      :class="classes"
+    />
+    <div v-if="!!this.$slots['right-icon']" class="input-group__icon">
+      <slot name="right-icon"></slot>
     </div>
   </div>
 </template>
@@ -15,6 +30,71 @@
 <script>
 export default {
   name: 'UiInput',
+
+  props: {
+    small: Boolean,
+    rounded: Boolean,
+    multiline: Boolean,
+    modelValue: String,
+    modelModifiers: Object,
+  },
+
+  inheritAttrs: false,
+
+  emits: ['update:modelValue'],
+
+  data() {
+    return {
+      hasSlots: false,
+    };
+  },
+
+  created() {
+    this.hasSlots = !!this.$slots['left-icon'] || !!this.$slots['right-icon'];
+  },
+
+  updated() {
+    this.hasSlots = !!this.$slots['left-icon'] || !!this.$slots['right-icon'];
+  },
+
+  computed: {
+    classes() {
+      return {
+        'form-control_sm': this.small,
+        'form-control_rounded': this.rounded,
+      };
+    },
+    iconsClasses() {
+      return {
+        'input-group_icon-left': !!this.$slots['left-icon'],
+        'input-group_icon-right': !!this.$slots['right-icon'],
+        'input-group_icon': this.hasSlots,
+      };
+    },
+    modelValueProxy: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
+    },
+
+    dinamicEvent() {
+      if (this.modelModifiers) {
+        if (Object.keys(this.modelModifiers).includes('lazy')) {
+          return 'change';
+        }
+      }
+      return 'input';
+    },
+  },
+
+  methods: {
+    focus() {
+      this.$refs.input.focus();
+    },
+  },
 };
 </script>
 
