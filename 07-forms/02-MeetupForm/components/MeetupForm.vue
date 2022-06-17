@@ -3,16 +3,16 @@
     <div class="meetup-form__content">
       <fieldset class="meetup-form__section">
         <ui-form-group label="Название">
-          <ui-input name="title" v-model="clonedMeetup.title" />
+          <ui-input v-model="clonedMeetup.title" name="title" />
         </ui-form-group>
         <ui-form-group label="Дата">
-          <ui-input-date type="date" name="date" v-model="clonedMeetup.date" />
+          <ui-input-date v-model="clonedMeetup.date" type="date" name="date" />
         </ui-form-group>
         <ui-form-group label="Место">
-          <ui-input name="place" v-model="clonedMeetup.place" />
+          <ui-input v-model="clonedMeetup.place" name="place" />
         </ui-form-group>
         <ui-form-group label="Описание">
-          <ui-input multiline rows="3" name="description" v-model="clonedMeetup.description" />
+          <ui-input v-model="clonedMeetup.description" multiline rows="3" name="description" />
         </ui-form-group>
         <ui-form-group label="Изображение">
           <!--
@@ -60,8 +60,16 @@
   </form>
 </template>
 
-<script>
-import { cloneDeep } from 'lodash-es';
+<script lang="ts">
+import { defineComponent } from '@vue/runtime-core';
+
+export default defineComponent({
+  name: 'MeetupForm',
+});
+</script>
+
+<script setup lang="ts">
+import { cloneDeep } from 'lodash';
 import MeetupAgendaItemForm from './MeetupAgendaItemForm';
 import UiButton from './UiButton';
 import UiFormGroup from './UiFormGroup';
@@ -69,70 +77,45 @@ import UiImageUploader from '../../../06-wrappers/05-UiImageUploader/components/
 import UiInput from './UiInput';
 import UiInputDate from '../../../06-wrappers/06-UiInputDate/components/UiInputDate.vue';
 import { createAgendaItem } from '../meetupService';
+import { defineProps, defineEmits, ref, Ref, PropType } from '@vue/runtime-core';
+import { AgendaItemType, AgendaType } from '../types/agenda-item.type';
 
-export default {
-  name: 'MeetupForm',
-
-  components: {
-    MeetupAgendaItemForm,
-    UiButton,
-    UiFormGroup,
-    UiImageUploader,
-    UiInput,
-    UiInputDate,
+const props = defineProps({
+  meetup: {
+    type: Object as PropType<AgendaType>,
+    required: true,
   },
 
-  props: {
-    meetup: {
-      type: Object,
-      required: true,
-    },
-
-    submitText: {
-      type: String,
-      default: '',
-    },
+  submitText: {
+    type: String,
+    default: '',
   },
+});
+const emits = defineEmits(['cancel', 'submit']);
 
-  emits: ['cancel', 'submit'],
-
-  data() {
-    return {
-      clonedMeetup: cloneDeep(this.meetup),
-    };
-  },
-
-  methods: {
-    cancel() {
-      this.$emit('cancel');
-    },
-
-    remove(index) {
-      this.clonedMeetup.agenda.splice(index, 1);
-    },
-
-    createItem() {
-      const item = createAgendaItem();
-      if (!this.clonedMeetup.agenda.length) {
-        item.startsAt = '07:00';
-        item.endsAt = '07:00';
-      }
-      if (this.clonedMeetup.agenda.length) {
-        item.startsAt = this.clonedMeetup.agenda.at(-1).endsAt;
-        item.endsAt = item.startsAt;
-      }
-      this.clonedMeetup.agenda.push(item);
-    },
-
-    saveChanges(event) {
-      event.preventDefault();
-      this.$emit('submit', cloneDeep(this.clonedMeetup));
-    },
-
-    updateAgendaItem(index, newValues) {
-      this.clonedMeetup.agenda[index] = newValues;
-    },
-  },
+const clonedMeetup: Ref<AgendaType> = ref(cloneDeep(props.meetup));
+const cancel = (): void => emits('cancel');
+const remove = (index: number): void => {
+  clonedMeetup.value.agenda.splice(index, 1);
+};
+const createItem = (): void => {
+  const item: AgendaItemType = createAgendaItem();
+  if (!clonedMeetup.value.agenda.length) {
+    item.startsAt = '07:00';
+    item.endsAt = '07:00';
+  }
+  if (clonedMeetup.value.agenda.length) {
+    item.startsAt = clonedMeetup.value.agenda[length - 1].endsAt;
+    item.endsAt = item.startsAt;
+  }
+  clonedMeetup.value.agenda.push(item);
+};
+const saveChanges = (event: Event): void => {
+  event.preventDefault();
+  emits('submit', clonedMeetup);
+};
+const updateAgendaItem = (index: number, newValue: string): void => {
+  clonedMeetup.value.agenda[index] = newValue;
 };
 </script>
 

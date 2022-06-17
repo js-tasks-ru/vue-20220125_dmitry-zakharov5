@@ -29,6 +29,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.15.0",
     "@types/jest": "^26.0.24",
+    "@types/lodash-es": "^4.17.6",
     "@typescript-eslint/parser": "^4.29.2",
     "@vue/babel-plugin-jsx": "^1.0.6",
     "@vue/cli-plugin-babel": "~4.5.0",
