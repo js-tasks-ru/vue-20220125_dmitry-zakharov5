@@ -1,27 +1,27 @@
 <template>
   <div class="input-group" :class="iconsClasses">
-    <div v-if="!!this.$slots['left-icon']" class="input-group__icon">
+    <div v-if="!!$slots['left-icon']" class="input-group__icon">
       <slot name="left-icon"></slot>
     </div>
     <textarea
       v-if="multiline"
       ref="input"
-      @[dinamicEvent]="modelValueProxy = $event.target.value"
       :value="modelValueProxy"
       v-bind="$attrs"
       class="form-control"
       :class="classes"
+      @[dinamicEvent]="modelValueProxy = $event.target.value"
     ></textarea>
     <input
       v-else
       ref="input"
-      @[dinamicEvent]="modelValueProxy = $event.target.value"
       :value="modelValueProxy"
       v-bind="$attrs"
       class="form-control"
       :class="classes"
+      @[dinamicEvent]="modelValueProxy = $event.target.value"
     />
-    <div v-if="!!this.$slots['right-icon']" class="input-group__icon">
+    <div v-if="!!$slots['right-icon']" class="input-group__icon">
       <slot name="right-icon"></slot>
     </div>
   </div>
@@ -31,6 +31,8 @@
 export default {
   name: 'UiInput',
 
+  inheritAttrs: false,
+
   props: {
     small: Boolean,
     rounded: Boolean,
@@ -39,22 +41,12 @@ export default {
     modelModifiers: Object,
   },
 
-  inheritAttrs: false,
-
   emits: ['update:modelValue'],
 
   data() {
     return {
       hasSlots: false,
     };
-  },
-
-  created() {
-    this.hasSlots = !!this.$slots['left-icon'] || !!this.$slots['right-icon'];
-  },
-
-  updated() {
-    this.hasSlots = !!this.$slots['left-icon'] || !!this.$slots['right-icon'];
   },
 
   computed: {
@@ -88,6 +80,14 @@ export default {
       }
       return 'input';
     },
+  },
+
+  created() {
+    this.hasSlots = !!this.$slots['left-icon'] || !!this.$slots['right-icon'];
+  },
+
+  updated() {
+    this.hasSlots = !!this.$slots['left-icon'] || !!this.$slots['right-icon'];
   },
 
   methods: {

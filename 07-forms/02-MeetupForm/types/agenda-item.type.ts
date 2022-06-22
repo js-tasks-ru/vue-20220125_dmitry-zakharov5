@@ -16,6 +16,6 @@ export type AgendaType = {
   place: string;
   date: number;
   image: null | string;
-  agenda: Array<AgendaItemType> | [];
+  agenda: Array<AgendaItemType>;
   imageToUpload: File;
 };

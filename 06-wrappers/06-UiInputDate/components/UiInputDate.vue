@@ -1,6 +1,6 @@
 <template>
-  <ui-input v-bind="$attrs" :type="type" v-model="formatedDate" @input="updateValue">
-    <template v-for="name in Object.keys($slots)" v-slot:[name]> <slot :name="name"></slot></template>
+  <ui-input :model-value="formattedDate" v-bind="$attrs" :type="type" @input="updateValue">
+    <template v-for="name in Object.keys($slots)" #[name]> <slot :name="name"></slot></template>
   </ui-input>
 </template>
 
@@ -12,8 +12,7 @@ export default {
   name: 'UiInputDate',
 
   components: { UiInput },
-
-  emits: ['update:modelValue'],
+  inheritAttrs: false,
 
   props: {
     type: {
@@ -21,33 +20,36 @@ export default {
       default: 'date',
     },
     modelValue: {
-      type: String,
+      type: [String, Number],
+    },
+  },
+  emits: ['update:modelValue'],
+
+  computed: {
+    formattedDate() {
+      if (this.modelValue) {
+        switch (this.type) {
+          case 'date':
+            return moment(this.modelValue).utc().format('YYYY-MM-DD');
+          case 'datetime-local':
+            return moment.utc(this.modelValue).utc().format('YYYY-MM-DDTHH:mm');
+          case 'time':
+            if (this.$attrs.step && +this.$attrs.step % 60 !== 0) {
+              return moment.utc(this.modelValue).utc().format('HH:mm');
+            } else {
+              return moment.utc(this.modelValue).utc().format('HH:mm');
+            }
+          default:
+            return '';
+        }
+      } else {
+        return '';
+      }
     },
   },
   methods: {
     updateValue(event) {
       this.$emit('update:modelValue', event.target.valueAsNumber);
-    },
-  },
-
-  computed: {
-    formatedDate() {
-      if (!this.modelValue) {
-        return '';
-      }
-      if (this.type === 'date') {
-        return moment(this.modelValue).utc().format('YYYY-MM-DD');
-      }
-      if (this.type === 'time') {
-        if (this.$attrs.step && +this.$attrs.step % 60 !== 0) {
-          return moment.utc(this.modelValue).utc().format('HH:mm');
-        } else {
-          return moment.utc(this.modelValue).utc().format('HH:mm');
-        }
-      }
-      if (this.type === 'datetime-local') {
-        return moment.utc(this.modelValue).utc().format('YYYY-MM-DDTHH:mm');
-      }
     },
   },
 };

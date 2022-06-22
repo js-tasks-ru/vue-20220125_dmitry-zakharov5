@@ -1,5 +1,5 @@
 <template>
-  <form class="meetup-form" @submit="saveChanges">
+  <form class="meetup-form" @submit.prevent="saveChanges">
     <div class="meetup-form__content">
       <fieldset class="meetup-form__section">
         <ui-form-group label="Название">
@@ -77,7 +77,7 @@ import UiImageUploader from '../../../06-wrappers/05-UiImageUploader/components/
 import UiInput from './UiInput';
 import UiInputDate from '../../../06-wrappers/06-UiInputDate/components/UiInputDate.vue';
 import { createAgendaItem } from '../meetupService';
-import { defineProps, defineEmits, ref, Ref, PropType } from '@vue/runtime-core';
+import { defineProps, defineEmits, ref, PropType } from '@vue/runtime-core';
 import { AgendaItemType, AgendaType } from '../types/agenda-item.type';
 
 const props = defineProps({
@@ -93,28 +93,32 @@ const props = defineProps({
 });
 const emits = defineEmits(['cancel', 'submit']);
 
-const clonedMeetup: Ref<AgendaType> = ref(cloneDeep(props.meetup));
+const clonedMeetup = ref<AgendaType>(cloneDeep(props.meetup));
+
 const cancel = (): void => emits('cancel');
+
 const remove = (index: number): void => {
   clonedMeetup.value.agenda.splice(index, 1);
 };
 const createItem = (): void => {
-  const item: AgendaItemType = createAgendaItem();
+  const item: AgendaItemType = cloneDeep(createAgendaItem());
   if (!clonedMeetup.value.agenda.length) {
     item.startsAt = '07:00';
     item.endsAt = '07:00';
   }
   if (clonedMeetup.value.agenda.length) {
-    item.startsAt = clonedMeetup.value.agenda[length - 1].endsAt;
+    item.startsAt = clonedMeetup.value.agenda.at(-1).endsAt;
     item.endsAt = item.startsAt;
   }
   clonedMeetup.value.agenda.push(item);
 };
+
 const saveChanges = (event: Event): void => {
   event.preventDefault();
-  emits('submit', clonedMeetup);
+  emits('submit', cloneDeep(clonedMeetup.value));
 };
-const updateAgendaItem = (index: number, newValue: string): void => {
+
+const updateAgendaItem = (index: number, newValue: AgendaItemType): void => {
   clonedMeetup.value.agenda[index] = newValue;
 };
 </script>
