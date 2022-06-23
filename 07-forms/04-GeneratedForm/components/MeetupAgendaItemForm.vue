@@ -5,7 +5,7 @@
     </button>
 
     <ui-form-group>
-      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
+      <ui-dropdown v-model="selectedOption" title="Тип" :options="agendaItemTypeOptions" name="type" />
     </ui-form-group>
 
     <div class="agenda-item-form__row">
@@ -30,142 +30,22 @@
   </fieldset>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+export default defineComponent({
+  name: 'MeetupAgendaItemForm',
+});
+</script>
+
+<script setup lang="ts">
 import UiIcon from './UiIcon';
 import UiFormGroup from './UiFormGroup';
 import UiInput from './UiInput';
 import UiDropdown from './UiDropdown';
+import { ref } from 'vue';
+import { agendaItemTypeOptions, agendaItemFormSchemas } from '@/services/_agenda-item.service';
 
-const agendaItemTypeIcons = {
-  registration: 'key',
-  opening: 'cal-sm',
-  talk: 'tv',
-  break: 'clock',
-  coffee: 'coffee',
-  closing: 'key',
-  afterparty: 'cal-sm',
-  other: 'cal-sm',
-};
-
-const agendaItemDefaultTitles = {
-  registration: 'Регистрация',
-  opening: 'Открытие',
-  break: 'Перерыв',
-  coffee: 'Coffee Break',
-  closing: 'Закрытие',
-  afterparty: 'Afterparty',
-  talk: 'Доклад',
-  other: 'Другое',
-};
-
-const agendaItemTypeOptions = Object.entries(agendaItemDefaultTitles).map(([type, title]) => ({
-  value: type,
-  text: title,
-  icon: agendaItemTypeIcons[type],
-}));
-
-const talkLanguageOptions = [
-  { value: null, text: 'Не указано' },
-  { value: 'RU', text: 'RU' },
-  { value: 'EN', text: 'EN' },
-];
-
-/**
- * @typedef FormItemSchema
- * @property {string} label
- * @property {string|object} component
- * @property {object} props
- */
-/** @typedef {string} AgendaItemField */
-/** @typedef {string} AgendaItemType */
-/** @typedef {Object.<AgendaItemType, FormItemSchema>} FormSchema */
-
-/** @type FormSchema */
-const commonAgendaItemFormSchema = {
-  title: {
-    label: 'Нестандартный текст (необязательно)',
-    component: 'ui-input',
-    props: {
-      name: 'title',
-    },
-  },
-};
-
-/** @type {Object.<AgendaItemField, FormSchema>} */
-const agendaItemFormSchemas = {
-  registration: commonAgendaItemFormSchema,
-  opening: commonAgendaItemFormSchema,
-  talk: {
-    title: {
-      label: 'Тема',
-      component: 'ui-input',
-      props: {
-        name: 'title',
-      },
-    },
-    speaker: {
-      label: 'Докладчик',
-      component: 'ui-input',
-      props: {
-        name: 'speaker',
-      },
-    },
-    description: {
-      label: 'Описание',
-      component: 'ui-input',
-      props: {
-        multiline: true,
-        name: 'description',
-      },
-    },
-    language: {
-      label: 'Язык',
-      component: 'ui-dropdown',
-      props: {
-        options: talkLanguageOptions,
-        title: 'Язык',
-        name: 'language',
-      },
-    },
-  },
-  break: commonAgendaItemFormSchema,
-  coffee: commonAgendaItemFormSchema,
-  closing: commonAgendaItemFormSchema,
-  afterparty: commonAgendaItemFormSchema,
-  other: {
-    title: {
-      label: 'Заголовок',
-      component: 'ui-input',
-      props: {
-        name: 'title',
-      },
-    },
-    description: {
-      label: 'Описание',
-      component: 'ui-input',
-      props: {
-        multiline: true,
-        name: 'description',
-      },
-    },
-  },
-};
-
-export default {
-  name: 'MeetupAgendaItemForm',
-
-  components: { UiIcon, UiFormGroup, UiInput, UiDropdown },
-
-  agendaItemTypeOptions,
-  agendaItemFormSchemas,
-
-  props: {
-    agendaItem: {
-      type: Object,
-      required: true,
-    },
-  },
-};
+const selectedOption = ref('');
 </script>
 
 <style scoped>

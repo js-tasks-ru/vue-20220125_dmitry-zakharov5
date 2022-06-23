@@ -78,7 +78,7 @@ import UiInput from './UiInput';
 import UiInputDate from '../../../06-wrappers/06-UiInputDate/components/UiInputDate.vue';
 import { createAgendaItem } from '../meetupService';
 import { defineProps, defineEmits, ref, PropType } from '@vue/runtime-core';
-import { AgendaItemType, AgendaType } from '../types/agenda-item.type';
+import { AgendaItemType, AgendaType } from '../../../src/types/agenda-item.type';
 
 const props = defineProps({
   meetup: {
