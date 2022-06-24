@@ -1,6 +1,6 @@
 <template>
   <fieldset class="agenda-item-form">
-    <button type="button" class="agenda-item-form__remove-button">
+    <button type="button" class="agenda-item-form__remove-button" @click="$emit('remove')">
       <ui-icon icon="trash" />
     </button>
 
@@ -20,12 +20,8 @@
         </ui-form-group>
       </div>
     </div>
-
-    <ui-form-group label="Заголовок">
-      <ui-input name="title" />
-    </ui-form-group>
-    <ui-form-group label="Описание">
-      <ui-input multiline name="description" />
+    <ui-form-group v-for="item in agendaItemFormSchemas[agendaItemProxy.type]" :key="item" :label="item.label">
+      <component :is="item.component" />
     </ui-form-group>
   </fieldset>
 </template>
@@ -42,9 +38,8 @@ import UiIcon from './UiIcon';
 import UiFormGroup from './UiFormGroup';
 import UiInput from './UiInput';
 import UiDropdown from './UiDropdown';
-import { ref, defineProps, defineEmits, computed } from 'vue';
-import { agendaItemTypeOptions } from '@/services/_agenda-item.service';
-import { cloneDeep } from 'lodash';
+import { defineProps, defineEmits, computed } from 'vue';
+import { agendaItemTypeOptions, agendaItemFormSchemas } from '@/services/_agenda-item.service';
 import { AgendaItemType } from '@/types/agenda-item.type';
 import { PropType } from '@vue/runtime-core';
 
