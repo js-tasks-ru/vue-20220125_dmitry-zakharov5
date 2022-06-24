@@ -20,8 +20,14 @@
         </ui-form-group>
       </div>
     </div>
-    <ui-form-group v-for="item in agendaItemFormSchemas[agendaItemProxy.type]" :key="item" :label="item.label">
-      <component :is="item.component" />
+    <ui-form-group v-for="(item, key) in agendaItemFormSchemas[agendaItemProxy.type]" :key="item" :label="item.label">
+      <component
+        :is="ComponentNameInterpretation[item.component]"
+        v-model="agendaItemProxy[key]"
+        :multiline="item.props.multiline"
+        :options="item.props.options"
+        title="Язык"
+      />
     </ui-form-group>
   </fieldset>
 </template>
@@ -60,6 +66,11 @@ const agendaItemProxy = computed({
     emits('update:agendaItem', value);
   },
 });
+
+enum ComponentNameInterpretation {
+  'ui-input' = UiInput,
+  'ui-dropdown' = UiDropdown,
+}
 </script>
 
 <style scoped>
