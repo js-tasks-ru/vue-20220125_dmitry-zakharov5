@@ -1,96 +1,76 @@
 <template>
   <fieldset class="agenda-item-form">
-    <button type="button" class="agenda-item-form__remove-button">
+    <button type="button" class="agenda-item-form__remove-button" @click="$emit('remove')">
       <ui-icon icon="trash" />
     </button>
 
     <ui-form-group>
-      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
+      <ui-dropdown v-model="agendaItemProxy.type" title="Тип" :options="agendaItemTypeOptions" name="type" />
     </ui-form-group>
 
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <ui-form-group label="Начало">
-          <ui-input type="time" placeholder="00:00" name="startsAt" />
+          <ui-input v-model="agendaItemProxy.startsAt" type="time" placeholder="00:00" name="startsAt" />
         </ui-form-group>
       </div>
       <div class="agenda-item-form__col">
         <ui-form-group label="Окончание">
-          <ui-input type="time" placeholder="00:00" name="endsAt" />
+          <ui-input v-model="agendaItemProxy.endsAt" type="time" placeholder="00:00" name="endsAt" />
         </ui-form-group>
       </div>
     </div>
-
-    <ui-form-group label="Тема">
-      <ui-input name="title" />
-    </ui-form-group>
-    <ui-form-group label="Докладчик">
-      <ui-input name="speaker" />
-    </ui-form-group>
-    <ui-form-group label="Описание">
-      <ui-input multiline name="description" />
-    </ui-form-group>
-    <ui-form-group label="Язык">
-      <ui-dropdown title="Язык" :options="$options.talkLanguageOptions" name="language" />
+    <ui-form-group v-for="(item, key) in agendaItemFormSchemas[agendaItemProxy.type]" :key="item" :label="item.label">
+      <component
+        :is="ComponentNameInterpretation[item.component]"
+        v-model="agendaItemProxy[key]"
+        :multiline="item.props.multiline"
+        :options="item.props.options"
+        title="Язык"
+      />
     </ui-form-group>
   </fieldset>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+export default defineComponent({
+  name: 'MeetupAgendaItemForm',
+});
+</script>
+
+<script setup lang="ts">
 import UiIcon from './UiIcon';
 import UiFormGroup from './UiFormGroup';
 import UiInput from './UiInput';
 import UiDropdown from './UiDropdown';
+import { defineProps, defineEmits, computed } from 'vue';
+import { agendaItemTypeOptions, agendaItemFormSchemas } from '@/services/_agenda-item.service';
+import { AgendaItemType } from '@/types/agenda-item.type';
+import { PropType } from '@vue/runtime-core';
 
-const agendaItemTypeIcons = {
-  registration: 'key',
-  opening: 'cal-sm',
-  talk: 'tv',
-  break: 'clock',
-  coffee: 'coffee',
-  closing: 'key',
-  afterparty: 'cal-sm',
-  other: 'cal-sm',
-};
-
-const agendaItemDefaultTitles = {
-  registration: 'Регистрация',
-  opening: 'Открытие',
-  break: 'Перерыв',
-  coffee: 'Coffee Break',
-  closing: 'Закрытие',
-  afterparty: 'Afterparty',
-  talk: 'Доклад',
-  other: 'Другое',
-};
-
-const agendaItemTypeOptions = Object.entries(agendaItemDefaultTitles).map(([type, title]) => ({
-  value: type,
-  text: title,
-  icon: agendaItemTypeIcons[type],
-}));
-
-const talkLanguageOptions = [
-  { value: null, text: 'Не указано' },
-  { value: 'RU', text: 'RU' },
-  { value: 'EN', text: 'EN' },
-];
-
-export default {
-  name: 'MeetupAgendaItemForm',
-
-  agendaItemTypeOptions,
-  talkLanguageOptions,
-
-  components: { UiIcon, UiFormGroup, UiInput, UiDropdown },
-
-  props: {
-    agendaItem: {
-      type: Object,
-      required: true,
-    },
+const props = defineProps({
+  agendaItem: {
+    type: Object as PropType<AgendaItemType>,
+    required: true,
   },
-};
+});
+
+const emits = defineEmits(['update:agendaItem', 'remove']);
+
+const agendaItemProxy = computed({
+  get() {
+    return props.agendaItem;
+  },
+  set(value) {
+    emits('update:agendaItem', value);
+  },
+});
+
+enum ComponentNameInterpretation {
+  'ui-input' = UiInput,
+  'ui-dropdown' = UiDropdown,
+}
 </script>
 
 <style scoped>

@@ -1,18 +1,18 @@
 <template>
-  <form class="meetup-form">
+  <form class="meetup-form" @submit.prevent="saveChanges">
     <div class="meetup-form__content">
       <fieldset class="meetup-form__section">
         <ui-form-group label="Название">
-          <ui-input name="title" />
+          <ui-input v-model="clonedMeetup.title" name="title" />
         </ui-form-group>
         <ui-form-group label="Дата">
-          <ui-input-date type="date" name="date" />
+          <ui-input-date v-model="clonedMeetup.date" type="date" name="date" />
         </ui-form-group>
         <ui-form-group label="Место">
-          <ui-input name="place" />
+          <ui-input v-model="clonedMeetup.place" name="place" />
         </ui-form-group>
         <ui-form-group label="Описание">
-          <ui-input multiline rows="3" name="description" />
+          <ui-input v-model="clonedMeetup.description" multiline rows="3" name="description" />
         </ui-form-group>
         <ui-form-group label="Изображение">
           <!--
@@ -21,24 +21,26 @@
           -->
           <ui-image-uploader
             name="image"
-            :preview="meetup.image"
-            @select="meetup.imageToUpload = $event"
-            @remove="meetup.imageToUpload = null"
+            :preview="clonedMeetup.image"
+            @select="clonedMeetup.imageToUpload = $event"
+            @remove="clonedMeetup.imageToUpload = null"
           />
         </ui-form-group>
       </fieldset>
 
       <h3 class="meetup-form__agenda-title">Программа</h3>
-      <!--
+
       <meetup-agenda-item-form
-         :key="agendaItem.id"
-         :agenda-item="..."
-         class="meetup-form__agenda-item"
-       />
-       -->
+        v-for="(elem, index) in clonedMeetup.agenda"
+        :key="elem.id"
+        :agenda-item="elem"
+        class="meetup-form__agenda-item"
+        @update:agenda-item="updateAgendaItem(index, $event)"
+        @remove="remove(index)"
+      />
 
       <div class="meetup-form__append">
-        <button class="meetup-form__append-button" type="button" data-test="addAgendaItem">
+        <button class="meetup-form__append-button" type="button" data-test="addAgendaItem" @click="createItem">
           + Добавить этап программы
         </button>
       </div>
@@ -47,49 +49,77 @@
     <div class="meetup-form__aside">
       <div class="meetup-form__aside-stick">
         <!-- data-test атрибуты используются для поиска нужного элемента в тестах, не удаляйте их -->
-        <ui-button variant="secondary" block class="meetup-form__aside-button" data-test="cancel">Отмена</ui-button>
+        <ui-button variant="secondary" block class="meetup-form__aside-button" data-test="cancel" @click="cancel"
+          >Отмена</ui-button
+        >
         <ui-button variant="primary" block class="meetup-form__aside-button" data-test="submit" type="submit">
-          SUBMIT
+          {{ submitText }}
         </ui-button>
       </div>
     </div>
   </form>
 </template>
 
-<script>
-// import { cloneDeep } from 'lodash-es';
+<script lang="ts">
+import { defineComponent } from '@vue/runtime-core';
 
+export default defineComponent({
+  name: 'MeetupForm',
+});
+</script>
+
+<script setup lang="ts">
+import { cloneDeep } from 'lodash';
 import MeetupAgendaItemForm from './MeetupAgendaItemForm';
 import UiButton from './UiButton';
 import UiFormGroup from './UiFormGroup';
-import UiImageUploader from './UiImageUploader';
+import UiImageUploader from '../../../06-wrappers/05-UiImageUploader/components/UiImageUploader.vue';
 import UiInput from './UiInput';
-import UiInputDate from './UiInputDate';
-// import { createAgendaItem } from '../meetupService';
+import UiInputDate from '../../../06-wrappers/06-UiInputDate/components/UiInputDate.vue';
+import { createAgendaItem } from '../meetupService';
+import { defineProps, defineEmits, ref, PropType } from '@vue/runtime-core';
+import { AgendaItemType, AgendaType } from '../../../src/types/agenda-item.type';
 
-export default {
-  name: 'MeetupForm',
-
-  components: {
-    MeetupAgendaItemForm,
-    UiButton,
-    UiFormGroup,
-    UiImageUploader,
-    UiInput,
-    UiInputDate,
+const props = defineProps({
+  meetup: {
+    type: Object as PropType<AgendaType>,
+    required: true,
   },
 
-  props: {
-    meetup: {
-      type: Object,
-      required: true,
-    },
-
-    submitText: {
-      type: String,
-      default: '',
-    },
+  submitText: {
+    type: String,
+    default: '',
   },
+});
+const emits = defineEmits(['cancel', 'submit']);
+
+const clonedMeetup = ref<AgendaType>(cloneDeep(props.meetup));
+
+const cancel = (): void => emits('cancel');
+
+const remove = (index: number): void => {
+  clonedMeetup.value.agenda.splice(index, 1);
+};
+const createItem = (): void => {
+  const item: AgendaItemType = cloneDeep(createAgendaItem());
+  if (!clonedMeetup.value.agenda.length) {
+    item.startsAt = '07:00';
+    item.endsAt = '07:00';
+  }
+  if (clonedMeetup.value.agenda.length) {
+    item.startsAt = clonedMeetup.value.agenda.at(-1).endsAt;
+    item.endsAt = item.startsAt;
+  }
+  clonedMeetup.value.agenda.push(item);
+};
+
+const saveChanges = (event: Event): void => {
+  event.preventDefault();
+  emits('submit', cloneDeep(clonedMeetup.value));
+};
+
+const updateAgendaItem = (index: number, newValue: AgendaItemType): void => {
+  clonedMeetup.value.agenda[index] = newValue;
 };
 </script>
 
