@@ -5,18 +5,18 @@
     </button>
 
     <ui-form-group>
-      <ui-dropdown v-model="selectedOption" title="Тип" :options="agendaItemTypeOptions" name="type" />
+      <ui-dropdown v-model="agendaItemProxy.type" title="Тип" :options="agendaItemTypeOptions" name="type" />
     </ui-form-group>
 
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <ui-form-group label="Начало">
-          <ui-input type="time" placeholder="00:00" name="startsAt" />
+          <ui-input v-model="agendaItemProxy.startsAt" type="time" placeholder="00:00" name="startsAt" />
         </ui-form-group>
       </div>
       <div class="agenda-item-form__col">
         <ui-form-group label="Окончание">
-          <ui-input type="time" placeholder="00:00" name="endsAt" />
+          <ui-input v-model="agendaItemProxy.endsAt" type="time" placeholder="00:00" name="endsAt" />
         </ui-form-group>
       </div>
     </div>
@@ -42,10 +42,29 @@ import UiIcon from './UiIcon';
 import UiFormGroup from './UiFormGroup';
 import UiInput from './UiInput';
 import UiDropdown from './UiDropdown';
-import { ref } from 'vue';
-import { agendaItemTypeOptions, agendaItemFormSchemas } from '@/services/_agenda-item.service';
+import { ref, defineProps, defineEmits, computed } from 'vue';
+import { agendaItemTypeOptions } from '@/services/_agenda-item.service';
+import { cloneDeep } from 'lodash';
+import { AgendaItemType } from '@/types/agenda-item.type';
+import { PropType } from '@vue/runtime-core';
 
-const selectedOption = ref('');
+const props = defineProps({
+  agendaItem: {
+    type: Object as PropType<AgendaItemType>,
+    required: true,
+  },
+});
+
+const emits = defineEmits(['update:agendaItem', 'remove']);
+
+const agendaItemProxy = computed({
+  get() {
+    return props.agendaItem;
+  },
+  set(value) {
+    emits('update:agendaItem', value);
+  },
+});
 </script>
 
 <style scoped>

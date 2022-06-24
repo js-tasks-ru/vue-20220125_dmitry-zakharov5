@@ -4,6 +4,7 @@ import {
   AgendaItemIconsType,
   AgendaItemLanguageOptionType,
   AgendaItemOptionsType,
+  AgendaItemType,
   CommonAgendaItemFormSchemaType,
 } from '@/types/agenda-item.type';
 
